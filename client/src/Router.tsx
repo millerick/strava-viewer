@@ -3,9 +3,7 @@ import { Route } from 'react-router-dom';
 
 class Tmp extends React.Component<any, any> {
   render() {
-    return (
-      <h1>Hit!</h1>
-    )
+    return <h1>Hit!</h1>;
   }
 }
 
