@@ -4,7 +4,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   entry: './build/index.js',
   output: {
     path: path.resolve(__dirname, 'build/dist'),
@@ -13,7 +13,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Strava Viewer',
+      template: './client/src/index.html'
     }),
   ],
 };
