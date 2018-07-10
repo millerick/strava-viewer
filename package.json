@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build-client": "tsc --project ./tsconfig.client.json && webpack --config webpack.config.js",
     "build": "tsc --project ./tsconfig.json",
+    "clean": "rm -rf build && rm -rf dist",
     "start": "node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -24,6 +26,9 @@
     "typescript": "2.9.2"
   },
   "devDependencies": {
-    "prettier": "1.13.7"
+    "html-webpack-plugin": "3.2.0",
+    "prettier": "1.13.7",
+    "webpack": "4.15.1",
+    "webpack-cli": "3.0.8"
   }
 }
