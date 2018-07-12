@@ -8,7 +8,7 @@ export function filterActivityType(allActivities: any[], activityType: string): 
 export function aggregateActivityType(allActivities: any[], activityType: string): any {
   const filteredActivities = filterActivityType(allActivities, activityType);
   const activityAggregates = {};
-  const keys = _.sortedUniq(_.map(filteredActivities, activity => activity.date));
+  const keys = _.reverse(_.sortedUniq(_.map(filteredActivities, activity => activity.date)));
   _.each(
     keys,
     key =>
