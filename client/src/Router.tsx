@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Route } from 'react-router-dom';
-import { Sidepanel } from './Components/Sidepanel/Sidepanel';
+import { App } from './Components/App/App';
 
 export class AppRouter extends React.Component<any, any> {
   render() {
     return (
-      <div>
-        <Route exact path="/" component={Sidepanel} />
-        <Route exact path="/:activityType" component={Sidepanel} />
+      <div id="router">
+        <Route exact path="/" component={App} />
+        <Route exact path="/:activityType" component={App} />
       </div>
     );
   }
