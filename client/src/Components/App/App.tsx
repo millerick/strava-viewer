@@ -1,16 +1,22 @@
 import * as React from 'react';
-require('./App.scss');
 
 import { Sidepanel } from '../Sidepanel/Sidepanel';
+import { Mainpanel } from '../Mainpanel/Mainpanel';
 
 export class App extends React.Component<any, any> {
+  constructor(props: any) {
+    super(props);
+    const activityType = props.match && props.match.params ? props.match.params.activityType : undefined;
+    this.state = {
+      activityType,
+    };
+  }
+
   render() {
     return (
       <div id="app">
         <Sidepanel />
-        <div id="mainpanel" className="Mainpanel">
-          Look here!
-        </div>
+        <Mainpanel activityType={this.state.activityType} />
       </div>
     );
   }
