@@ -4,6 +4,7 @@ import * as path from 'path';
 import * as request from 'request-promise-native';
 import * as credentials from './credentials';
 import * as utils from './utils';
+import * as activityController from './controller/activityController';
 
 const ATHLETE_DATA: any[] = [];
 
@@ -31,17 +32,15 @@ app.use(async (req, res, next) => {
       });
       if (allActivities.length > 0) {
         _.each(allActivities, activity =>
-          ATHLETE_DATA.push(
-            _.pick(activity, [
-              'name',
-              'type',
-              'distance',
-              'start_date_local',
-              'elapsed_time',
-              'total_elevation_gain',
-              'average_speed',
-            ]),
-          ),
+          ATHLETE_DATA.push({
+            name: activity.name,
+            type: activity.type,
+            distance: activity.distance,
+            date: new Date(activity.start_date_local.split('T')[0]),
+            elapsedTime: activity.elapsed_time,
+            elevationGain: activity.total_elevation_gain,
+            averageSpeed: activity.average_speed,
+          }),
         );
       } else {
         break;
@@ -66,13 +65,17 @@ app.get('/api/total', (req, res) => {
       };
     }
     activityTypeTotals[activity.type].distance += utils.convertMetersToMiles(activity.distance);
-    activityTypeTotals[activity.type].elevationGain += utils.convertMetersToFeet(activity.total_elevation_gain);
+    activityTypeTotals[activity.type].elevationGain += utils.convertMetersToFeet(activity.elevationGain);
   });
   res.send(activityTypeTotals);
 });
 
 app.get('/api/details/:activityType', (req, res) => {
-  res.send(_.filter(ATHLETE_DATA, activity => activity.type === req.params.activityType));
+  res.send(activityController.filterActivityType(ATHLETE_DATA, req.params.activityType));
+});
+
+app.get('/api/aggregate/:activityType', (req, res) => {
+  res.send(activityController.aggregateActivityType(ATHLETE_DATA, req.params.activityType));
 });
 
 app.get('/assets/:fileName', (req, res) => res.sendFile(path.join(CLIENT_DIR, req.params.fileName)));
