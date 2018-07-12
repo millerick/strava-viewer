@@ -1,0 +1,31 @@
+.SidepanelContainer {
+  background-color: #202020;
+  color: white;
+  padding: 3px;
+  margin: 3px;
+  font-weight: bold;
+  border-radius: 3px;
+  width: 400px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: gray;
+  font-family: "Roboto";
+  text-align: center;
+}
+
+.SidepanelContainer:hover {
+  background-color: #404040;
+}
+
+.Sidepanel {
+  background-color: #202020;
+  padding: 3px;
+  display: inline-block;
+  height: 100%;
+  border-right-color: gray;
+  border-right-style: solid;
+  border-right-width: 3px;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
