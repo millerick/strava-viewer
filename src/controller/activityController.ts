@@ -8,15 +8,27 @@ export function filterActivityType(allActivities: any[], activityType: string): 
 export function aggregateActivityType(allActivities: any[], activityType: string): any {
   const filteredActivities = filterActivityType(allActivities, activityType);
   const activityAggregates = {};
-  _.each(filteredActivities, activity => {
-    if (_.isNil(activityAggregates[activity.date])) {
-      activityAggregates[activity.date] = {
+  const keys = _.sortedUniq(_.map(filteredActivities, activity => activity.date));
+  _.each(
+    keys,
+    key =>
+      (activityAggregates[key] = {
         distance: 0,
         elevationGain: 0,
-      };
-    }
+      }),
+  );
+  _.each(filteredActivities, activity => {
     activityAggregates[activity.date].distance += utils.convertMetersToMiles(activity.distance);
     activityAggregates[activity.date].elevationGain += utils.convertMetersToFeet(activity.elevationGain);
   });
-  return activityAggregates;
+  const series = [];
+  series.push({
+    unit: 'Miles',
+    series: _.map(keys, key => [key, activityAggregates[key].distance]),
+  });
+  series.push({
+    unit: 'Feet',
+    series: _.map(keys, key => [key, activityAggregates[key].elevationGain]),
+  });
+  return series;
 }
