@@ -22,6 +22,7 @@
     "@types/react-dom": "16.0.6",
     "@types/react-router": "4.0.28",
     "@types/react-router-dom": "4.2.7",
+    "@types/request": "2.47.1",
     "@types/request-promise-native": "1.0.15",
     "d3": "5.5.0",
     "express": "4.16.3",
@@ -30,6 +31,7 @@
     "react-dom": "16.4.1",
     "react-router": "4.3.1",
     "react-router-dom": "4.3.1",
+    "request": "2.87.0",
     "request-promise-native": "1.0.5",
     "tslint": "5.10.0",
     "typescript": "2.9.2"
