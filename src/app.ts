@@ -36,7 +36,7 @@ app.use(async (req, res, next) => {
             name: activity.name,
             type: activity.type,
             distance: activity.distance,
-            date: new Date(activity.start_date_local.split('T')[0]),
+            date: activity.start_date_local.split('T')[0],
             elapsedTime: activity.elapsed_time,
             elevationGain: activity.total_elevation_gain,
             averageSpeed: activity.average_speed,
