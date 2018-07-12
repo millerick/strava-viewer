@@ -15,11 +15,13 @@ export function aggregateActivityType(allActivities: any[], activityType: string
       (activityAggregates[key] = {
         distance: 0,
         elevationGain: 0,
+        elapsedTime: 0,
       }),
   );
   _.each(filteredActivities, activity => {
     activityAggregates[activity.date].distance += utils.convertMetersToMiles(activity.distance);
     activityAggregates[activity.date].elevationGain += utils.convertMetersToFeet(activity.elevationGain);
+    activityAggregates[activity.date].elapsedTime += activity.elapsedTime;
   });
   const series = [];
   series.push({
@@ -31,6 +33,11 @@ export function aggregateActivityType(allActivities: any[], activityType: string
     metric: 'Elevation Gain',
     unit: 'Feet',
     series: _.map(keys, key => [key, activityAggregates[key].elevationGain]),
+  });
+  series.push({
+    metric: 'Elapsed Time',
+    unit: 'Seconds',
+    series: _.map(keys, key => [key, activityAggregates[key].elapsedTime]),
   });
   return series;
 }

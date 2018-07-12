@@ -24,6 +24,7 @@ export class Mainpanel extends React.Component<any, any> {
     }
     return (
       <div id="mainpanel" className="Mainpanel">
+        <h1>{this.state.activityType}</h1>
         {this.state.series.map((series: any, idx: number) => {
           return <Chart key={idx} series={series} />;
         })}
