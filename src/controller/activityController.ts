@@ -23,10 +23,12 @@ export function aggregateActivityType(allActivities: any[], activityType: string
   });
   const series = [];
   series.push({
+    metric: 'Distance',
     unit: 'Miles',
     series: _.map(keys, key => [key, activityAggregates[key].distance]),
   });
   series.push({
+    metric: 'Elevation Gain',
     unit: 'Feet',
     series: _.map(keys, key => [key, activityAggregates[key].elevationGain]),
   });

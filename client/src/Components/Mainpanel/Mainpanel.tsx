@@ -2,11 +2,13 @@ import * as React from 'react';
 import axios from 'axios';
 require('./Mainpanel.scss');
 
+import { Chart } from '../Chart/Chart';
+
 export class Mainpanel extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      activityType: this.props.activityType,
+      activityType: props.activityType,
       series: [],
     };
   }
@@ -22,7 +24,9 @@ export class Mainpanel extends React.Component<any, any> {
     }
     return (
       <div id="mainpanel" className="Mainpanel">
-        {JSON.stringify(this.state.series)}
+        {this.state.series.map((series: any, idx: number) => {
+          return <Chart key={idx} series={series} />;
+        })}
       </div>
     );
   }
