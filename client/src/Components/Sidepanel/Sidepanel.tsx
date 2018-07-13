@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import axios from 'axios';
 require('./Sidepanel.scss');
 
@@ -18,10 +19,12 @@ export class Sidepanel extends React.Component<any, any> {
   }
 
   render() {
+    const keys = _.keys(this.state.data);
+    const orderedKeys = _.sortBy(keys, key => -this.state.data[key].distance);
     return (
       <div id="sidepanel" className="Sidepanel">
-        {Object.keys(this.state.data).map(activityType => {
-          return <SidepanelContainer activityType={activityType} activityTotals={this.state.data[activityType]} />;
+        {orderedKeys.map((activityType, idx) => {
+          return <SidepanelContainer key={idx} activityTotals={this.state.data[activityType]} />;
         })}
       </div>
     );

@@ -5,7 +5,7 @@ export class SidepanelContainer extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      activityType: props.activityType,
+      activityType: props.activityTotals.activityType,
       totalDistance: props.activityTotals.distance,
       totalElevationGain: props.activityTotals.elevationGain,
     };

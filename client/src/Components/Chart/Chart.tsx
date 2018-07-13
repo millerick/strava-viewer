@@ -50,7 +50,11 @@ export class Chart extends React.Component<any, any> {
       .selectAll('rect')
       .data(this.state.series)
       .attr('class', 'bar')
-      .attr('x', d => xScale(d[0]) as number)
+      .attr('x', d => {
+        const res: number | undefined = xScale(d[0]);
+        if (res !== undefined) return res;
+        return 0;
+      })
       .attr('y', d => yScale(d[1]))
       .attr('height', d => 300 - yScale(d[1]))
       .attr('width', xScale.bandwidth());

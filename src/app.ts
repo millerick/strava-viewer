@@ -51,11 +51,6 @@ app.use(async (req, res, next) => {
   next();
 });
 
-app.get('/test', async (req, res) => {
-  _.each(ATHLETE_DATA, activity => console.log(activity));
-  res.send(_.map(ATHLETE_DATA, activity => activity.name));
-});
-
 app.get('/api/total', (req, res) => {
   const activityTypeTotals = {};
   _.each(ATHLETE_DATA, activity => {
@@ -68,7 +63,15 @@ app.get('/api/total', (req, res) => {
     activityTypeTotals[activity.type].distance += utils.convertMetersToMiles(activity.distance);
     activityTypeTotals[activity.type].elevationGain += utils.convertMetersToFeet(activity.elevationGain);
   });
-  res.send(activityTypeTotals);
+  const outputTotals: any[] = [];
+  _.each(_.keys(activityTypeTotals), activityType => {
+    outputTotals.push({
+      distance: activityTypeTotals[activityType].distance,
+      elevationGain: activityTypeTotals[activityType].elevationGain,
+      activityType,
+    });
+  });
+  res.send(outputTotals);
 });
 
 app.get('/api/details/:activityType', (req, res) => {
