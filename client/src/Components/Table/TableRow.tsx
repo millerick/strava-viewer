@@ -19,7 +19,7 @@ export class TableRow extends React.Component<any, any> {
         {rowData.map((dataPoint: any, idx: number) => {
           return (
             <td className="TableCell" key={idx}>
-              {dataPoint}
+              {typeof dataPoint === 'number' ? dataPoint.toFixed(2) : dataPoint}
             </td>
           );
         })}

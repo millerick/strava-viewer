@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import * as utils from '../utils';
 
 export function filterActivityType(allActivities: any[], activityType: string): any[] {
   return _.filter(allActivities, activity => activity.type === activityType);
@@ -19,8 +18,8 @@ export function aggregateActivityType(allActivities: any[], activityType: string
       }),
   );
   _.each(filteredActivities, activity => {
-    activityAggregates[activity.date].distance += utils.convertMetersToMiles(activity.distance);
-    activityAggregates[activity.date].elevationGain += utils.convertMetersToFeet(activity.elevationGain);
+    activityAggregates[activity.date].distance += activity.distance;
+    activityAggregates[activity.date].elevationGain += activity.elevationGain;
     activityAggregates[activity.date].elapsedTime += activity.elapsedTime;
   });
   const series = [];

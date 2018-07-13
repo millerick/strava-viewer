@@ -36,10 +36,10 @@ app.use(async (req, res, next) => {
           ATHLETE_DATA.push({
             name: activity.name,
             type: activity.type,
-            distance: activity.distance,
+            distance: utils.convertMetersToMiles(activity.distance),
             date: activity.start_date_local.split('T')[0],
             elapsedTime: activity.elapsed_time,
-            elevationGain: activity.total_elevation_gain,
+            elevationGain: utils.convertMetersToFeet(activity.total_elevation_gain),
             averageSpeed: activity.average_speed,
           }),
         );
@@ -60,8 +60,8 @@ app.get('/api/total', (req, res) => {
         elevationGain: 0,
       };
     }
-    activityTypeTotals[activity.type].distance += utils.convertMetersToMiles(activity.distance);
-    activityTypeTotals[activity.type].elevationGain += utils.convertMetersToFeet(activity.elevationGain);
+    activityTypeTotals[activity.type].distance += activity.distance;
+    activityTypeTotals[activity.type].elevationGain += activity.elevationGain;
   });
   const outputTotals: any[] = [];
   _.each(_.keys(activityTypeTotals), activityType => {
