@@ -1,5 +1,6 @@
 .DataTable {
   border-collapse: collapse;
+  margin: 5px;
 }
 
 .TableCell {
@@ -7,4 +8,11 @@
   border-style: solid;
   border-width: 2px;
   font-family: "Roboto";
+  padding: 2px;
+}
+
+.TableHeader {
+  @extend .TableCell;
+  text-align: center;
+  background-color: orange;
 }

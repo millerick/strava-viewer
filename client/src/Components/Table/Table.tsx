@@ -23,15 +23,15 @@ export class Table extends React.Component<any, any> {
   render() {
     return (
       <table className="DataTable">
-        <th>
+        <tr>
           {this.state.headers.map((header: string, idx: number) => {
             return (
-              <td className="TableCell" key={idx}>
+              <th className="TableHeader" key={idx}>
                 {header}
-              </td>
+              </th>
             );
           })}
-        </th>
+        </tr>
         {this.state.data.map((dataPoint: any, idx: number) => {
           return (
             <TableRow key={idx} headers={this.state.headers} fieldMapping={this.state.fieldMapping} data={dataPoint} />
