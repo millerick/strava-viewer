@@ -28,6 +28,7 @@ app.use(async (req, res, next) => {
       const allActivities = await baseRequest.get('athlete/activities', {
         qs: {
           page,
+          per_page: 50,
         },
       });
       if (allActivities.length > 0) {
