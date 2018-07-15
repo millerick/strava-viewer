@@ -4,6 +4,7 @@ import axios from 'axios';
 require('./Sidepanel.scss');
 
 import { SidepanelContainer } from './SidepanelContainer';
+import { Logout } from './Logout';
 
 export class Sidepanel extends React.Component<any, any> {
   constructor(props: any) {
@@ -26,6 +27,7 @@ export class Sidepanel extends React.Component<any, any> {
         {orderedKeys.map((activityType, idx) => {
           return <SidepanelContainer key={idx} activityTotals={this.state.data[activityType]} />;
         })}
+        <Logout />
       </div>
     );
   }

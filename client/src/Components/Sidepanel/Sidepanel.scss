@@ -13,8 +13,19 @@
   text-align: center;
 }
 
+.Logout {
+  @extend .SidepanelContainer;
+  position: absolute;
+  bottom: 10;
+  left: 0;
+}
+
 .SidepanelContainer:hover {
   background-color: #404040;
+}
+
+.Logout:hover {
+  @extend .SidepanelContainer:hover
 }
 
 .Sidepanel {

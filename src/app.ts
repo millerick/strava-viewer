@@ -97,6 +97,15 @@ app.get('/api/oauth/redirect', async (req, res) => {
   );
 });
 
+app.get('/api/logout', (req, res) => {
+  res.clearCookie('stravaViewerUser');
+  res.redirect(
+    url.format({
+      pathname: 'https://www.strava.com/logout',
+    }),
+  );
+});
+
 app.get('/api/total', (req, res) => {
   const cookieUser = req.cookies.stravaViewerUser;
   const activityTypeTotals = {};
