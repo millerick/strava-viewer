@@ -1,59 +1,106 @@
 import * as _ from 'lodash';
 import * as express from 'express';
+import * as cookieParser from 'cookie-parser';
 import * as path from 'path';
 import * as request from 'request-promise-native';
+import * as url from 'url';
+
 import * as credentials from './credentials';
 import * as utils from './utils';
 import * as activityController from './controller/activityController';
 
-const ATHLETE_DATA: any[] = [];
-
-const baseRequest = request.defaults({
-  baseUrl: 'https://www.strava.com/api/v3/',
-  headers: {
-    Authorization: `Bearer ${credentials.accessToken}`,
-  },
-  json: true,
-});
+const ATHLETE_DATA = {};
 
 const CLIENT_DIR = path.join(__dirname, '../build/dist');
-console.log(CLIENT_DIR);
 
 const app = express();
 
-app.use(async (req, res, next) => {
-  if (ATHLETE_DATA.length === 0) {
-    for (let page = 1; page < 100; page++) {
-      console.log(page);
-      const allActivities = await baseRequest.get('athlete/activities', {
-        qs: {
-          page,
-          per_page: 50,
-        },
+async function getAthleteData(bearerToken: string, athleteEmail: string) {
+  if (!_.has(ATHLETE_DATA, athleteEmail)) {
+    ATHLETE_DATA[athleteEmail] = [];
+  } else {
+    return;
+  }
+  for (let page = 1; page < 100; page++) {
+    console.log(`Fetching page ${page} for ${athleteEmail}`);
+    const allActivities = await request('https://www.strava.com/api/v3/athlete/activities', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${bearerToken}`,
+      },
+      qs: {
+        page,
+        per_page: 50,
+      },
+      json: true,
+    });
+    if (allActivities.length > 0) {
+      _.each(allActivities, activity => {
+        const dataPoint = {
+          name: activity.name,
+          type: activity.type,
+          distance: utils.convertMetersToMiles(activity.distance),
+          date: activity.start_date_local.split('T')[0],
+          elapsedTime: activity.elapsed_time,
+          elevationGain: utils.convertMetersToFeet(activity.total_elevation_gain),
+          averageSpeed: activity.average_speed,
+        };
+        ATHLETE_DATA[athleteEmail].push(dataPoint);
       });
-      if (allActivities.length > 0) {
-        _.each(allActivities, activity =>
-          ATHLETE_DATA.push({
-            name: activity.name,
-            type: activity.type,
-            distance: utils.convertMetersToMiles(activity.distance),
-            date: activity.start_date_local.split('T')[0],
-            elapsedTime: activity.elapsed_time,
-            elevationGain: utils.convertMetersToFeet(activity.total_elevation_gain),
-            averageSpeed: activity.average_speed,
-          }),
-        );
-      } else {
-        break;
-      }
+    } else {
+      break;
     }
+  }
+}
+
+app.use(cookieParser());
+
+app.use(function(req, res, next) {
+  const cookieUser = req.cookies.stravaViewerUser;
+  if (req.url.startsWith('/api') || req.url.startsWith('/assets')) {
+    next();
+    return;
+  }
+  if (_.isNil(cookieUser) || _.isNil(ATHLETE_DATA[cookieUser])) {
+    res.redirect(
+      url.format({
+        pathname: 'https://www.strava.com/oauth/authorize',
+        query: {
+          client_id: credentials.clientID,
+          redirect_uri: 'http://localhost:3000/api/oauth/redirect',
+          response_type: 'code',
+          approval_prompt: 'auto',
+          scope: 'view_private',
+        },
+      }),
+    );
   }
   next();
 });
 
+app.get('/api/oauth/redirect', async (req, res) => {
+  const oauthData = await request('https://www.strava.com/oauth/token', {
+    method: 'POST',
+    body: {
+      client_id: credentials.clientID,
+      client_secret: credentials.clientSecret,
+      code: req.query.code,
+    },
+    json: true,
+  });
+  await getAthleteData(oauthData.access_token, oauthData.athlete.email);
+  res.cookie('stravaViewerUser', oauthData.athlete.email, { maxAge: 3600000, httpOnly: true, path: '/' });
+  res.redirect(
+    url.format({
+      pathname: 'http://localhost:3000/',
+    }),
+  );
+});
+
 app.get('/api/total', (req, res) => {
+  const cookieUser = req.cookies.stravaViewerUser;
   const activityTypeTotals = {};
-  _.each(ATHLETE_DATA, activity => {
+  _.each(ATHLETE_DATA[cookieUser], activity => {
     if (_.isNil(activityTypeTotals[activity.type])) {
       activityTypeTotals[activity.type] = {
         distance: 0,
@@ -75,11 +122,13 @@ app.get('/api/total', (req, res) => {
 });
 
 app.get('/api/details/:activityType', (req, res) => {
-  res.send(activityController.filterActivityType(ATHLETE_DATA, req.params.activityType));
+  const cookieUser = req.cookies.stravaViewerUser;
+  res.send(activityController.filterActivityType(ATHLETE_DATA[cookieUser], req.params.activityType));
 });
 
 app.get('/api/aggregate/:activityType', (req, res) => {
-  res.send(activityController.aggregateActivityType(ATHLETE_DATA, req.params.activityType));
+  const cookieUser = req.cookies.stravaViewerUser;
+  res.send(activityController.aggregateActivityType(ATHLETE_DATA[cookieUser], req.params.activityType));
 });
 
 app.get('/assets/:fileName', (req, res) => res.sendFile(path.join(CLIENT_DIR, req.params.fileName)));
