@@ -7,7 +7,7 @@
     "build-client": "tsc --project ./tsconfig.client.json && copyfiles -u 2 ./client/src/**/*.scss ./build/ && copyfiles -u 3 ./client/src/assets/**/* ./build/dist/ && webpack --config webpack.config.js",
     "build": "tsc --project ./tsconfig.json",
     "clean": "rm -rf build && rm -rf dist",
-    "prettier": "prettier --write src/**/*.[jt]s && prettier --write client/**/*.[jt]sx",
+    "prettier": "prettier --write src/**/*.[jt]s && prettier --write client/**/*.[jt]sx && prettier --write types/*",
     "start": "node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

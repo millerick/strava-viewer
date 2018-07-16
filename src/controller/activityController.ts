@@ -1,10 +1,10 @@
 import * as _ from 'lodash';
 
-export function filterActivityType(allActivities: any[], activityType: string): any[] {
+export function filterActivityType(allActivities: any[], activityType: ActivityType): any[] {
   return _.filter(allActivities, activity => activity.type === activityType);
 }
 
-export function aggregateActivityType(allActivities: any[], activityType: string): any {
+export function aggregateActivityType(allActivities: any[], activityType: ActivityType): any {
   const filteredActivities = filterActivityType(allActivities, activityType);
   const activityAggregates = {};
   const keys = _.reverse(_.sortedUniq(_.map(filteredActivities, activity => activity.date)));
