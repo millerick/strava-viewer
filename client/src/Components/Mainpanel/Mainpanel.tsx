@@ -1,6 +1,6 @@
 import * as React from 'react';
 import axios from 'axios';
-require('./Mainpanel.scss');
+import './Mainpanel.scss';
 
 import { Chart } from '../Chart/Chart';
 import { Table } from '../Table/Table';

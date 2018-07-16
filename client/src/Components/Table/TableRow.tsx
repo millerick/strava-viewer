@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-require('./Table.scss');
+import './Table.scss';
 
 export class TableRow extends React.Component<any, any> {
   constructor(props: any) {

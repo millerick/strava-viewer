@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import * as d3 from 'd3';
-require('./Chart.scss');
+import './Chart.scss';
 
 export class Chart extends React.Component<any, any> {
   node: any;

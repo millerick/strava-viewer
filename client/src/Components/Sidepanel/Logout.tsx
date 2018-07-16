@@ -1,5 +1,5 @@
 import * as React from 'react';
-require('./Sidepanel.scss');
+import './Sidepanel.scss';
 
 export class Logout extends React.Component<any, any> {
   render() {

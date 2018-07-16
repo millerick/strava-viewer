@@ -1,6 +1,6 @@
 import * as React from 'react';
 import axios from 'axios';
-require('./Table.scss');
+import './Table.scss';
 
 import { TableRow } from './TableRow';
 

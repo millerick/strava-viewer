@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import axios from 'axios';
-require('./Sidepanel.scss');
+import './Sidepanel.scss';
 
 import { SidepanelContainer } from './SidepanelContainer';
 import { Logout } from './Logout';
