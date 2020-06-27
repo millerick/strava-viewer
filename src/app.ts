@@ -70,7 +70,7 @@ app.use(function(req, res, next) {
           redirect_uri: 'http://localhost:3000/api/oauth/redirect',
           response_type: 'code',
           approval_prompt: 'auto',
-          scope: 'view_private',
+          scope: 'profile:read_all,activity:read_all',
         },
       }),
     );
