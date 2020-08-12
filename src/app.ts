@@ -132,12 +132,12 @@ app.get('/api/total', (req, res) => {
 
 app.get('/api/details/:activityType', (req, res) => {
   const cookieUser = req.cookies.stravaViewerUser;
-  res.send(activityController.filterActivityType(ATHLETE_DATA[cookieUser], req.params.activityType));
+  res.send(activityController.filterActivityType(ATHLETE_DATA[cookieUser], req.params.activityType as ActivityType));
 });
 
 app.get('/api/aggregate/:activityType', (req, res) => {
   const cookieUser = req.cookies.stravaViewerUser;
-  res.send(activityController.aggregateActivityType(ATHLETE_DATA[cookieUser], req.params.activityType));
+  res.send(activityController.aggregateActivityType(ATHLETE_DATA[cookieUser], req.params.activityType as ActivityType));
 });
 
 app.get('/assets/:fileName', (req, res) => res.sendFile(path.join(CLIENT_DIR, req.params.fileName)));
