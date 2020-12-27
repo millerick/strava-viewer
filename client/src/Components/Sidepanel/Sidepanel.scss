@@ -13,7 +13,7 @@
   text-align: center;
 }
 
-.Logout {
+.LogInOutButton {
   @extend .SidepanelContainer;
   position: absolute;
   bottom: 10;
@@ -24,7 +24,7 @@
   background-color: #404040;
 }
 
-.Logout:hover {
+.LogInOutButton:hover {
   @extend .SidepanelContainer:hover
 }
 
