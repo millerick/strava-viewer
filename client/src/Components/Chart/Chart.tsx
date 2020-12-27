@@ -50,13 +50,13 @@ export class Chart extends React.Component<any, any> {
       .selectAll('rect')
       .data(this.state.series)
       .attr('class', 'bar')
-      .attr('x', d => {
+      .attr('x', (d: any[]) => {
         const res: number | undefined = xScale(d[0]);
         if (res !== undefined) return res;
         return 0;
       })
-      .attr('y', d => yScale(d[1]))
-      .attr('height', d => 300 - yScale(d[1]))
+      .attr('y', (d : any[]) => yScale(d[1]))
+      .attr('height', (d: any[]) => 300 - yScale(d[1]))
       .attr('width', xScale.bandwidth());
     chart.append('g').call(d3.axisLeft(yScale).ticks(10));
     chart

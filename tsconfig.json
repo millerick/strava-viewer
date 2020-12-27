@@ -18,7 +18,7 @@
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "types": [
-      "../types/"
+      "./types/"
     ]
   },
   "include": [
