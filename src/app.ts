@@ -11,6 +11,7 @@ import * as activityController from './controller/activityController';
 import * as config from './config';
 
 const ATHLETE_DATA = {};
+const ATHLETE_TOKENS = {};
 
 const CLIENT_DIR = path.join(__dirname, '../build/dist');
 
@@ -25,11 +26,8 @@ declare global {
 }
 
 async function getAthleteData(bearerToken: string, athleteId: number) {
-  if (!_.has(ATHLETE_DATA, athleteId)) {
-    ATHLETE_DATA[athleteId] = [];
-  } else {
-    return;
-  }
+  // TODO: limit this pull to just information that has been added since the last pull
+  ATHLETE_DATA[athleteId] = [];
   for (let page = 1; page < 100; page++) {
     console.log(`Fetching page ${page} for id ${athleteId}`);
     const allActivities = await request('https://www.strava.com/api/v3/athlete/activities', {
@@ -44,7 +42,7 @@ async function getAthleteData(bearerToken: string, athleteId: number) {
       json: true,
     });
     if (allActivities.length > 0) {
-      _.each(allActivities, activity => {
+      _.each(allActivities, (activity) => {
         const dataPoint = {
           name: activity.name,
           type: activity.type,
@@ -64,7 +62,7 @@ async function getAthleteData(bearerToken: string, athleteId: number) {
 
 app.use(cookieParser());
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   req.stravaViewerUser = req.cookies.stravaViewerUser;
   next();
 });
@@ -79,7 +77,7 @@ app.get('/login', async (req, res) => {
           redirect_uri: `${config.BASE_PATH}/api/oauth/redirect`,
           response_type: 'code',
           approval_prompt: 'auto',
-          scope: 'profile:read_all,activity:read_all',
+          scope: 'activity:read_all',
         },
       }),
     );
@@ -103,8 +101,35 @@ app.get('/api/oauth/redirect', async (req, res) => {
     json: true,
   });
   const athleteId = oauthData.athlete.id;
-  await getAthleteData(oauthData.access_token, athleteId);
-  res.cookie('stravaViewerUser', athleteId, { maxAge: 3600000, secure: config.SECURE_COOKIES, httpOnly: true, path: '/' });
+  const bearerToken = oauthData.access_token;
+  ATHLETE_TOKENS[athleteId] = bearerToken;
+  await getAthleteData(bearerToken, athleteId);
+  res.cookie('stravaViewerUser', athleteId, {
+    maxAge: 3600000,
+    secure: config.SECURE_COOKIES,
+    httpOnly: false,
+    path: '/',
+  });
+  res.redirect(
+    url.format({
+      pathname: config.BASE_PATH,
+    }),
+  );
+});
+
+/**
+ * TODO: Make a router and give it its own middleware for the API routes
+ */
+
+app.get('/api/refresh', async (req, res) => {
+  const cookieUser = req.stravaViewerUser;
+  if (cookieUser === undefined) {
+    res.status(500);
+    res.send();
+    return;
+  }
+  console.log(`=== ${cookieUser} ===`);
+  await getAthleteData(ATHLETE_TOKENS[cookieUser], cookieUser);
   res.redirect(
     url.format({
       pathname: config.BASE_PATH,
@@ -121,10 +146,6 @@ app.get('/api/logout', (req, res) => {
   );
 });
 
-/**
- * TODO: Make a router and give it its own middleware for the API routes
- */
-
 app.get('/api/total', (req, res) => {
   const cookieUser = req.stravaViewerUser;
   if (cookieUser === undefined) {
@@ -133,7 +154,7 @@ app.get('/api/total', (req, res) => {
     return;
   }
   const activityTypeTotals = {};
-  _.each(ATHLETE_DATA[cookieUser], activity => {
+  _.each(ATHLETE_DATA[cookieUser], (activity) => {
     if (_.isNil(activityTypeTotals[activity.type])) {
       activityTypeTotals[activity.type] = {
         distance: 0,
@@ -144,7 +165,7 @@ app.get('/api/total', (req, res) => {
     activityTypeTotals[activity.type].elevationGain += activity.elevationGain;
   });
   const outputTotals: any[] = [];
-  _.each(_.keys(activityTypeTotals), activityType => {
+  _.each(_.keys(activityTypeTotals), (activityType) => {
     outputTotals.push({
       distance: activityTypeTotals[activityType].distance,
       elevationGain: activityTypeTotals[activityType].elevationGain,

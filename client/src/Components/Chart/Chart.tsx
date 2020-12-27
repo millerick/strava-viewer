@@ -22,28 +22,22 @@ export class Chart extends React.Component<any, any> {
 
   createChart() {
     const node = this.node;
-    const chart = d3
-      .select(node)
-      .append('g')
-      .attr('transform', `translate(${50},${50})`);
-    const dataMax = d3.max(_.map(this.state.series, point => point[1]));
+    const chart = d3.select(node).append('g').attr('transform', `translate(${50},${50})`);
+    const dataMax = d3.max(_.map(this.state.series, (point) => point[1]));
     const xScale = d3
       .scaleBand()
-      .domain(_.map(this.state.series, point => point[0]))
+      .domain(_.map(this.state.series, (point) => point[0]))
       .rangeRound([0, 900])
       .padding(0.1);
-    const yScale = d3
-      .scaleLinear()
-      .domain([dataMax, 0])
-      .range([0, 300]);
+    const yScale = d3.scaleLinear().domain([dataMax, 0]).range([0, 300]);
     chart
       .selectAll('rect')
-      .data(_.map(this.state.series, point => point[1]))
+      .data(_.map(this.state.series, (point) => point[1]))
       .enter()
       .append('rect');
     chart
       .selectAll('rect')
-      .data(_.map(this.state.series, point => point[1]))
+      .data(_.map(this.state.series, (point) => point[1]))
       .exit()
       .remove();
     chart
@@ -55,7 +49,7 @@ export class Chart extends React.Component<any, any> {
         if (res !== undefined) return res;
         return 0;
       })
-      .attr('y', (d : any[]) => yScale(d[1]))
+      .attr('y', (d: any[]) => yScale(d[1]))
       .attr('height', (d: any[]) => 300 - yScale(d[1]))
       .attr('width', xScale.bandwidth());
     chart.append('g').call(d3.axisLeft(yScale).ticks(10));
@@ -77,6 +71,6 @@ export class Chart extends React.Component<any, any> {
   }
 
   render() {
-    return <svg ref={node => (this.node = node)} height={400} width={1000} />;
+    return <svg ref={(node) => (this.node = node)} height={400} width={1000} />;
   }
 }

@@ -11,13 +11,16 @@
   border-color: gray;
   font-family: "Roboto";
   text-align: center;
+  flex-shrink: 0;
+}
+
+.Divider {
+  display: flex;
+  flex: 1;
 }
 
 .LogInOutButton {
   @extend .SidepanelContainer;
-  position: absolute;
-  bottom: 10;
-  left: 0;
 }
 
 .SidepanelContainer:hover {
@@ -31,7 +34,8 @@
 .Sidepanel {
   background-color: #202020;
   padding: 3px;
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
   height: 100%;
   border-right-color: gray;
   border-right-style: solid;

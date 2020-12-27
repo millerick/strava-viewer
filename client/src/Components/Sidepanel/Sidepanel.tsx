@@ -7,11 +7,12 @@ import './Sidepanel.scss';
 import { SidepanelContainer } from './SidepanelContainer';
 import { Logout } from './Logout';
 import { Login } from './Login';
+import { Refresh } from './Refresh';
 
 export class Sidepanel extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
-    console.log(Cookies.get('stravaViewerUser'))
+    console.log(Cookies.get('stravaViewerUser'));
     this.state = {
       data: {},
       loggedInFlag: !_.isNil(Cookies.get('stravaViewerUser')),
@@ -25,12 +26,14 @@ export class Sidepanel extends React.Component<any, any> {
 
   render() {
     const keys = _.keys(this.state.data);
-    const orderedKeys = _.sortBy(keys, key => -this.state.data[key].distance);
+    const orderedKeys = _.sortBy(keys, (key) => -this.state.data[key].distance);
     return (
       <div id="sidepanel" className="Sidepanel">
         {orderedKeys.map((activityType, idx) => {
           return <SidepanelContainer key={idx} activityTotals={this.state.data[activityType]} />;
         })}
+        <div className="Divider" />
+        {this.state.loggedInFlag && <Refresh /> /* Display refresh button only when logged in */}
         {this.state.loggedInFlag ? <Logout /> : <Login />}
       </div>
     );

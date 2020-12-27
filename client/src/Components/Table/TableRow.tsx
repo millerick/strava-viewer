@@ -13,7 +13,7 @@ export class TableRow extends React.Component<any, any> {
   }
 
   render() {
-    const rowData = _.map(this.state.headers, header => this.state.data[this.state.fieldMapping[header]]);
+    const rowData = _.map(this.state.headers, (header) => this.state.data[this.state.fieldMapping[header]]);
     return (
       <tr>
         {rowData.map((dataPoint: any, idx: number) => {
