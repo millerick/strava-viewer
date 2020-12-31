@@ -1,5 +1,8 @@
 export const NODE_ENV = process.env.NODE_ENV || 'dev';
 
+/**
+ * HTTP CONFIGS
+ */
 export const BASE_PATH = (() => {
   switch (NODE_ENV) {
     case 'production':
@@ -19,3 +22,10 @@ export const SECURE_COOKIES = (() => {
       return false;
   }
 })();
+
+/**
+ * POSTGRES CONFIGS
+ */
+export const POSTGRES_HOST = '192.168.86.44';
+export const POSTGRES_DATABASE = 'strava_viewer'; // TODO: separate into dev and production databases
+export const POSTGRES_PORT = 5432;

@@ -10,6 +10,19 @@ import * as utils from './utils';
 import * as activityController from './controller/activityController';
 import * as config from './config';
 
+/**
+ * TODO: Move postgres connection stuff to its own place
+ */
+import { Client } from 'pg';
+const client = new Client({
+  user: credentials.POSTGRES_USER,
+  password: credentials.POSTGRES_PASSWORD,
+  host: config.POSTGRES_HOST,
+  database: config.POSTGRES_DATABASE,
+  port: config.POSTGRES_PORT,
+});
+client.connect();
+
 const ATHLETE_DATA = {};
 const ATHLETE_TOKENS = {};
 
@@ -199,4 +212,8 @@ app.get('/assets/:fileName', (req, res) => res.sendFile(path.join(CLIENT_DIR, re
 
 app.get('*', (req, res) => res.sendFile(path.join(CLIENT_DIR, 'index.html')));
 
-app.listen(3000, () => console.log('App listening on port 3000!'));
+app.listen(3000, async () => {
+  console.log('App listening on port 3000!');
+  const res = await client.query('SELECT NOW()');
+  console.log(res.rows[0]);
+});
