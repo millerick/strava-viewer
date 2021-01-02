@@ -27,6 +27,11 @@ declare global {
   }
 }
 
+/**
+ * Retrieves data from the Strava API using a bearer token and the athleteId.
+ * @param bearerToken Bearer token used by the Strava API
+ * @param athleteId Id of the athlete within Strava matching the bearer token.
+ */
 async function getAthleteData(bearerToken: string, athleteId: number) {
   // TODO: limit this pull to just information that has been added since the last pull
   ATHLETE_DATA[athleteId] = [];

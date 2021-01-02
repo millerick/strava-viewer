@@ -1,9 +1,19 @@
 import * as _ from 'lodash';
 
+/**
+ * Filters activities to a specific activity type
+ * @param allActivities Array of activities
+ * @param activityType ActivityType to filter to.
+ */
 export function filterActivityType(allActivities: any[], activityType: ActivityType): any[] {
   return _.filter(allActivities, (activity) => activity.type === activityType);
 }
 
+/**
+ * Perform aggregations on an array of activities after filtering to a specific ActivityType
+ * @param allActivities Array of activities.
+ * @param activityType ActivityType to filter to.
+ */
 export function aggregateActivityType(allActivities: any[], activityType: ActivityType): any {
   const filteredActivities = filterActivityType(allActivities, activityType);
   const activityAggregates = {};
