@@ -19,6 +19,7 @@ const CLIENT_DIR = path.join(__dirname, '../build/dist');
 const app = express();
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
       stravaViewerUser?: number;
