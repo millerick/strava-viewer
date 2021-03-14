@@ -24,7 +24,7 @@ export async function insertOne(
   elevationGain: number,
 ): Promise<void> {
   await db.pool.query(
-    `INSERT INTO ${TABLE_NAME}(id, user_id, name, type, distance, activity_datetime, elapsed_time, elevation_gain) VALUES($1, $2, $3, $4, $5, $6, $7, $8)`,
+    `INSERT INTO ${TABLE_NAME}(id, user_id, name, type, distance, activity_datetime, elapsed_time, elevation_gain) VALUES($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT DO NOTHING`,
     [externalId, userId, name, type, distance, activityDateTime, elapsedTime, elevationGain],
   );
 }
