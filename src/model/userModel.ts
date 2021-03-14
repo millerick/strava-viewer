@@ -27,6 +27,19 @@ export async function insert(
   return queryResults.rows[0].id;
 }
 
+export async function updateByStravaUserId(
+  stravaUserId: string,
+  sessionId: string,
+  refreshToken: string,
+  bearerToken: string,
+  stravaUserName: string,
+): Promise<void> {
+  await db.pool.query(
+    `UPDATE ${TABLE_NAME} SET session_id=$1, refresh_token=$2, bearer_token=$3, strava_user_name=$4 WHERE strava_user_id=$5`,
+    [sessionId, refreshToken, bearerToken, stravaUserName, stravaUserId],
+  );
+}
+
 export async function getUser(id: string): Promise<UserData | undefined> {
   const queryResults = await db.pool.query(`SELECT * FROM ${TABLE_NAME} WHERE id=$1`, [id]);
   return queryResults.rows[0];
