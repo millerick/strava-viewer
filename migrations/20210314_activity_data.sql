@@ -9,8 +9,7 @@ CREATE TABLE activity_data(
   activity_datetime TIMESTAMP,
   elapsed_time DOUBLE PRECISION,
   elevation_gain DOUBLE PRECISION,
-  PRIMARY KEY (id),
-  UNIQUE (strava_user_id)
+  PRIMARY KEY (id)
 );
 
 CREATE INDEX user_activity ON activity_data(user_id, activity_datetime);
