@@ -26,7 +26,7 @@ export const SECURE_COOKIES = (() => {
 /**
  * COOKIES
  */
-export const SESSION_COOKIE = 'strava-viewier-connect-session';
+export const SESSION_COOKIE = 'strava-viewer-connect-session';
 
 /**
  * POSTGRES CONFIGS

@@ -12,12 +12,16 @@ async function userExistsByStravaId(stravaUserId: string): Promise<boolean> {
 
 export async function addUser(
   stravaUserId: string,
+  sessionId: string,
   refreshToken: string,
   bearerToken: string,
   stravaUserName: string,
 ): Promise<void> {
   const userAlreadyExists = await userExistsByStravaId(stravaUserId);
   if (!userAlreadyExists) {
-    await userModel.insert(stravaUserId, refreshToken, bearerToken, stravaUserName);
+    await userModel.insert(stravaUserId, sessionId, refreshToken, bearerToken, stravaUserName);
   }
 }
+
+export const getUserBySessionId = userModel.getUserBySessionId;
+export const setSessionByStravaId = userModel.setSessionByStravaId;

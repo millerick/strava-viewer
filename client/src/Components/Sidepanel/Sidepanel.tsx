@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as Cookies from 'js-cookie';
 import * as _ from 'lodash';
 import axios from 'axios';
 import './Sidepanel.scss';
@@ -14,13 +13,19 @@ export class Sidepanel extends React.Component<any, any> {
     super(props);
     this.state = {
       data: {},
-      loggedInFlag: !_.isNil(Cookies.get('stravaViewerUser')),
+      loggedInFlag: false,
     };
   }
 
   async componentDidMount() {
-    const totalResponse = await axios.get('/api/total');
-    this.setState({ data: totalResponse.data });
+    const [totalResponse, loggedInCheck] = await Promise.all([
+      axios.get('/api/total'),
+      axios.get('/check-login'),
+    ]);
+    this.setState({
+      data: totalResponse.data,
+      loggedInFlag: loggedInCheck.data.loggedInFlag,
+    });
   }
 
   render() {
