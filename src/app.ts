@@ -138,7 +138,13 @@ app.get('/api/oauth/redirect', async (req, res) => {
   const athleteId = oauthData.athlete.id;
   const bearerToken = oauthData.access_token;
   ATHLETE_TOKENS[athleteId] = bearerToken;
-  await userController.addUser(athleteId, req.sessionID, oauthData.refresh_token, bearerToken, oauthData.athlete.username);
+  await userController.addUser(
+    athleteId,
+    req.sessionID,
+    oauthData.refresh_token,
+    bearerToken,
+    oauthData.athlete.username,
+  );
   await userController.setSessionByStravaId(athleteId, req.sessionID);
   const user = await userController.getUserBySessionId(req.sessionID);
   await getAthleteData(bearerToken, user!.id);

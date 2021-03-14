@@ -18,10 +18,7 @@ export class Sidepanel extends React.Component<any, any> {
   }
 
   async componentDidMount() {
-    const [totalResponse, loggedInCheck] = await Promise.all([
-      axios.get('/api/total'),
-      axios.get('/check-login'),
-    ]);
+    const [totalResponse, loggedInCheck] = await Promise.all([axios.get('/api/total'), axios.get('/check-login')]);
     this.setState({
       data: totalResponse.data,
       loggedInFlag: loggedInCheck.data.loggedInFlag,
