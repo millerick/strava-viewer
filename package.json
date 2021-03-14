@@ -28,7 +28,7 @@
     "@types/react-router-dom": "4.2.7",
     "@types/request": "2.47.1",
     "@types/request-promise-native": "1.0.15",
-    "axios": "0.19.2",
+    "axios": "0.21.1",
     "connect-pg-simple": "6.2.1",
     "cookie-parser": "1.4.3",
     "copyfiles": "2.3.0",
