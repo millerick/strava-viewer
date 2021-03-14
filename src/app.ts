@@ -1,5 +1,7 @@
 import * as _ from 'lodash';
 import * as express from 'express';
+import * as session from 'express-session';
+import * as connectPGSession from 'connect-pg-simple';
 import * as cookieParser from 'cookie-parser';
 import * as path from 'path';
 import * as request from 'request-promise-native';
@@ -10,6 +12,9 @@ import * as utils from './utils';
 import * as activityController from './controller/activityController';
 import * as config from './config';
 import * as db from './db';
+import * as userController from './controller/userController';
+
+const pgSession = connectPGSession(session);
 
 const ATHLETE_DATA = {};
 const ATHLETE_TOKENS = {};
@@ -69,6 +74,24 @@ async function getAthleteData(bearerToken: string, athleteId: number) {
 
 app.use(cookieParser());
 
+/**
+ * TODO: separate into private and public routes
+ */
+app.use(
+  session({
+    store: new pgSession({
+      pool: db.pool,
+    }),
+    secret: 'keyboard cat', // TODO: change to a secret
+    resave: false,
+    cookie: {
+      secure: config.SECURE_COOKIES,
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // one day
+    },
+  }),
+);
+
 app.use(function (req, res, next) {
   req.stravaViewerUser = req.cookies.stravaViewerUser;
   next();
@@ -110,6 +133,7 @@ app.get('/api/oauth/redirect', async (req, res) => {
   const athleteId = oauthData.athlete.id;
   const bearerToken = oauthData.access_token;
   ATHLETE_TOKENS[athleteId] = bearerToken;
+  await userController.addUser(oauthData.athlete.id, oauthData.refresh_token, bearerToken, oauthData.athlete.username);
   await getAthleteData(bearerToken, athleteId);
   res.cookie('stravaViewerUser', athleteId, {
     maxAge: 3600000,
@@ -155,6 +179,7 @@ app.get('/api/logout', (req, res) => {
 
 app.get('/api/total', (req, res) => {
   const cookieUser = req.stravaViewerUser;
+  console.log(`===\n${JSON.stringify(req.session)}\n===`);
   if (cookieUser === undefined) {
     res.status(500);
     res.send();
