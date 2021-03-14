@@ -14,10 +14,9 @@ import * as config from './config';
 import * as db from './db';
 import * as userController from './controller/userController';
 import * as userMiddleware from './middleware/userMiddleware';
+import * as activityDataModel from './model/activityDataModel';
 
 const pgSession = connectPGSession(session);
-
-const ATHLETE_DATA = {};
 
 const CLIENT_DIR = path.join(__dirname, '../build/dist');
 
@@ -39,7 +38,6 @@ declare global {
  */
 async function getAthleteData(bearerToken: string, userId: string) {
   // TODO: limit this pull to just information that has been added since the last pull
-  ATHLETE_DATA[userId] = [];
   for (let page = 1; page < 100; page++) {
     console.log(`Fetching page ${page} for id ${userId}`);
     const allActivities = await request('https://www.strava.com/api/v3/athlete/activities', {
@@ -54,17 +52,17 @@ async function getAthleteData(bearerToken: string, userId: string) {
       json: true,
     });
     if (allActivities.length > 0) {
-      _.each(allActivities, (activity) => {
-        const dataPoint = {
-          name: activity.name,
-          type: activity.type,
-          distance: utils.convertMetersToMiles(activity.distance),
-          date: activity.start_date_local.split('T')[0],
-          elapsedTime: activity.elapsed_time,
-          elevationGain: utils.convertMetersToFeet(activity.total_elevation_gain),
-          averageSpeed: activity.average_speed,
-        };
-        ATHLETE_DATA[userId].push(dataPoint);
+      _.each(allActivities, async (activity) => {
+        await activityDataModel.insertOne(
+          activity.external_id,
+          userId,
+          activity.name,
+          activity.type,
+          utils.convertMetersToMiles(activity.distance),
+          activity.start_date_local,
+          activity.elapsed_time,
+          utils.convertMetersToFeet(activity.total_elevation_gain),
+        );
       });
     } else {
       break;
@@ -186,14 +184,15 @@ app.get('/api/logout', (req, res) => {
   );
 });
 
-app.get('/api/total', (req, res) => {
+app.get('/api/total', async (req, res) => {
   if (req.userId === undefined) {
     res.status(500);
     res.send();
     return;
   }
   const activityTypeTotals = {};
-  _.each(ATHLETE_DATA[req.userId], (activity) => {
+  const athleteData = await activityDataModel.getUserActivities(req.userId);
+  _.each(athleteData, (activity) => {
     if (_.isNil(activityTypeTotals[activity.type])) {
       activityTypeTotals[activity.type] = {
         distance: 0,
@@ -214,22 +213,24 @@ app.get('/api/total', (req, res) => {
   res.send(outputTotals);
 });
 
-app.get('/api/details/:activityType', (req, res) => {
+app.get('/api/details/:activityType', async (req, res) => {
   if (req.userId === undefined) {
     res.status(500);
     res.send();
     return;
   }
-  res.send(activityController.filterActivityType(ATHLETE_DATA[req.userId], req.params.activityType as ActivityType));
+  const athleteData = await activityDataModel.getUserActivities(req.userId);
+  res.send(activityController.filterActivityType(athleteData, req.params.activityType as ActivityType));
 });
 
-app.get('/api/aggregate/:activityType', (req, res) => {
+app.get('/api/aggregate/:activityType', async (req, res) => {
   if (req.userId === undefined) {
     res.status(500);
     res.send();
     return;
   }
-  res.send(activityController.aggregateActivityType(ATHLETE_DATA[req.userId], req.params.activityType as ActivityType));
+  const athleteData = await activityDataModel.getUserActivities(req.userId);
+  res.send(activityController.aggregateActivityType(athleteData, req.params.activityType as ActivityType));
 });
 
 app.get('/assets/:fileName', (req, res) => res.sendFile(path.join(CLIENT_DIR, req.params.fileName)));
