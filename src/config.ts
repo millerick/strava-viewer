@@ -24,6 +24,11 @@ export const SECURE_COOKIES = (() => {
 })();
 
 /**
+ * COOKIES
+ */
+export const SESSION_COOKIE = 'strava-viewier-connect-session';
+
+/**
  * POSTGRES CONFIGS
  */
 export const POSTGRES_HOST = '192.168.86.44';

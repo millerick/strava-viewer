@@ -82,6 +82,7 @@ app.use(
     store: new pgSession({
       pool: db.pool,
     }),
+    name: config.SESSION_COOKIE,
     secret: 'keyboard cat', // TODO: change to a secret
     resave: false,
     cookie: {
@@ -159,7 +160,6 @@ app.get('/api/refresh', async (req, res) => {
     res.send();
     return;
   }
-  console.log(`=== ${cookieUser} ===`);
   await getAthleteData(ATHLETE_TOKENS[cookieUser], cookieUser);
   res.redirect(
     url.format({
@@ -170,6 +170,7 @@ app.get('/api/refresh', async (req, res) => {
 
 app.get('/api/logout', (req, res) => {
   res.clearCookie('stravaViewerUser');
+  res.clearCookie(config.SESSION_COOKIE);
   res.redirect(
     url.format({
       pathname: config.BASE_PATH,
@@ -179,7 +180,6 @@ app.get('/api/logout', (req, res) => {
 
 app.get('/api/total', (req, res) => {
   const cookieUser = req.stravaViewerUser;
-  console.log(`===\n${JSON.stringify(req.session)}\n===`);
   if (cookieUser === undefined) {
     res.status(500);
     res.send();
@@ -233,6 +233,4 @@ app.get('*', (req, res) => res.sendFile(path.join(CLIENT_DIR, 'index.html')));
 
 app.listen(3000, async () => {
   console.log('App listening on port 3000!');
-  const res = await db.pool.query('SELECT NOW()');
-  console.log(res.rows[0]);
 });

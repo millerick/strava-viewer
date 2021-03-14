@@ -12,7 +12,6 @@ import { Refresh } from './Refresh';
 export class Sidepanel extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
-    console.log(Cookies.get('stravaViewerUser'));
     this.state = {
       data: {},
       loggedInFlag: !_.isNil(Cookies.get('stravaViewerUser')),
