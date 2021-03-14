@@ -6,7 +6,7 @@ CREATE TABLE activity_data(
   name VARCHAR(255),
   type VARCHAR(255),
   distance DOUBLE PRECISION,
-  activity_datetime DATETIME,
+  activity_datetime TIMESTAMP,
   elapsed_time DOUBLE PRECISION,
   elevation_gain DOUBLE PRECISION,
   PRIMARY KEY (id),
