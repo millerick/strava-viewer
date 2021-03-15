@@ -37,7 +37,11 @@ declare global {
  * @param athleteId Id of the athlete within Strava matching the bearer token.
  */
 async function getAthleteData(bearerToken: string, userId: string) {
-  // TODO: limit this pull to just information that has been added since the last pull
+  const latestActivityDatetime = await activityDataModel.getLatestActivityTimestamp(userId);
+  let pullAfter = 0;
+  if (latestActivityDatetime !== undefined) {
+    pullAfter = Math.floor(latestActivityDatetime.getTime() / 1000) + 1;
+  }
   for (let page = 1; page < 100; page++) {
     console.log(`Fetching page ${page} for id ${userId}`);
     const allActivities = await request('https://www.strava.com/api/v3/athlete/activities', {
@@ -47,6 +51,7 @@ async function getAthleteData(bearerToken: string, userId: string) {
       },
       qs: {
         page,
+        after: pullAfter,
         per_page: 50,
       },
       json: true,
@@ -54,7 +59,6 @@ async function getAthleteData(bearerToken: string, userId: string) {
     if (allActivities.length > 0) {
       _.each(allActivities, async (activity) => {
         await activityDataModel.insertOne(
-          activity.external_id,
           userId,
           activity.name,
           activity.type,
