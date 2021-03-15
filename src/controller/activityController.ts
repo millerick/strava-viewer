@@ -3,24 +3,14 @@ import * as utils from '../utils';
 import { ActivityData } from '../model/activityDataModel';
 
 /**
- * Filters activities to a specific activity type
- * @param allActivities Array of activities
- * @param activityType ActivityType to filter to.
- */
-export function filterActivityType(allActivities: ActivityData[], activityType: ActivityType): ActivityData[] {
-  return _.filter(allActivities, (activity) => activity.type === activityType);
-}
-
-/**
  * Perform aggregations on an array of activities after filtering to a specific ActivityType
  * @param allActivities Array of activities.
  * @param activityType ActivityType to filter to.
  */
-export function aggregateActivityType(allActivities: ActivityData[], activityType: ActivityType): any {
-  const filteredActivities = filterActivityType(allActivities, activityType);
+export function aggregateActivityType(allActivities: ActivityData[]): any {
   const activityAggregates = {};
   const keys = _.reverse(
-    _.sortedUniq(_.map(filteredActivities, (activity) => utils.getDateStringFromDate(activity.activity_date))),
+    _.sortedUniq(_.map(allActivities, (activity) => utils.getDateStringFromDate(activity.activity_date))),
   );
   _.each(
     keys,
@@ -31,7 +21,7 @@ export function aggregateActivityType(allActivities: ActivityData[], activityTyp
         elapsedTime: 0,
       }),
   );
-  _.each(filteredActivities, (activity) => {
+  _.each(allActivities, (activity) => {
     const dateKey = utils.getDateStringFromDate(activity.activity_date);
     activityAggregates[dateKey].distance += activity.distance;
     activityAggregates[dateKey].elevationGain += activity.elevation_gain;

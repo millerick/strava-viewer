@@ -13,3 +13,4 @@ CREATE TABLE activity_data(
 );
 
 CREATE INDEX user_activity ON activity_data(user_id, activity_datetime);
+CREATE INDEX user_activity_type ON acitivity_data(user_id, type, activity_datetime);

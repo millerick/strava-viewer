@@ -194,27 +194,8 @@ app.get('/api/total', async (req, res) => {
     res.send();
     return;
   }
-  const activityTypeTotals = {};
-  const athleteData = await activityDataModel.getUserActivities(req.userId);
-  _.each(athleteData, (activity) => {
-    if (_.isNil(activityTypeTotals[activity.type])) {
-      activityTypeTotals[activity.type] = {
-        distance: 0,
-        elevationGain: 0,
-      };
-    }
-    activityTypeTotals[activity.type].distance += activity.distance;
-    activityTypeTotals[activity.type].elevationGain += activity.elevation_gain;
-  });
-  const outputTotals: any[] = [];
-  _.each(_.keys(activityTypeTotals), (activityType) => {
-    outputTotals.push({
-      distance: activityTypeTotals[activityType].distance,
-      elevationGain: activityTypeTotals[activityType].elevationGain,
-      activityType,
-    });
-  });
-  res.send(outputTotals);
+  const athleteTotals = await activityDataModel.aggregateActivityTypeTotals(req.userId);
+  res.send(athleteTotals);
 });
 
 app.get('/api/details/:activityType', async (req, res) => {
@@ -223,8 +204,8 @@ app.get('/api/details/:activityType', async (req, res) => {
     res.send();
     return;
   }
-  const athleteData = await activityDataModel.getUserActivities(req.userId);
-  res.send(activityController.filterActivityType(athleteData, req.params.activityType as ActivityType));
+  const athleteData = await activityDataModel.getUserActivitiesByType(req.userId, req.params.activityType);
+  res.send(athleteData);
 });
 
 app.get('/api/aggregate/:activityType', async (req, res) => {
@@ -233,8 +214,8 @@ app.get('/api/aggregate/:activityType', async (req, res) => {
     res.send();
     return;
   }
-  const athleteData = await activityDataModel.getUserActivities(req.userId);
-  res.send(activityController.aggregateActivityType(athleteData, req.params.activityType as ActivityType));
+  const athleteData = await activityDataModel.getUserActivitiesByType(req.userId, req.params.activityType);
+  res.send(activityController.aggregateActivityType(athleteData));
 });
 
 app.get('/assets/:fileName', (req, res) => res.sendFile(path.join(CLIENT_DIR, req.params.fileName)));

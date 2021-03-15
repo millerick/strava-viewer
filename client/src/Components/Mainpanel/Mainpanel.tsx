@@ -15,8 +15,12 @@ export class Mainpanel extends React.Component<any, any> {
   }
 
   async componentDidMount() {
-    const aggregateResponse = await axios.get(`/api/aggregate/${this.state.activityType}`);
-    this.setState({ series: aggregateResponse.data });
+    if (this.state.activityType !== undefined) {
+      const aggregateResponse = await axios.get(`/api/aggregate/${this.state.activityType}`);
+      this.setState({ series: aggregateResponse.data });
+    } else {
+      this.setState({ series: [] });
+    }
   }
 
   render() {
