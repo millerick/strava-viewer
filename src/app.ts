@@ -196,17 +196,17 @@ app.get('/api/total', async (req, res) => {
     if (_.isNil(activityTypeTotals[activity.type])) {
       activityTypeTotals[activity.type] = {
         distance: 0,
-        elevationGain: 0,
+        elevation_gain: 0,
       };
     }
     activityTypeTotals[activity.type].distance += activity.distance;
-    activityTypeTotals[activity.type].elevationGain += activity.elevationGain;
+    activityTypeTotals[activity.type].elevationGain += activity.elevation_gain;
   });
   const outputTotals: any[] = [];
   _.each(_.keys(activityTypeTotals), (activityType) => {
     outputTotals.push({
       distance: activityTypeTotals[activityType].distance,
-      elevationGain: activityTypeTotals[activityType].elevationGain,
+      elevationGain: activityTypeTotals[activityType].elevation_gain,
       activityType,
     });
   });

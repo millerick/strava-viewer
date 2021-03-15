@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS activity_data;
 
 CREATE TABLE activity_data(
-  id uuid NOT NULL,
+  id VARCHAR(255) NOT NULL,
   user_id uuid NOT NULL,
   name VARCHAR(255),
   type VARCHAR(255),
