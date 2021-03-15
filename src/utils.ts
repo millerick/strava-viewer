@@ -15,3 +15,11 @@ export function convertMetersToFeet(meters: number): number {
 export function convertMetersToMiles(meters: number): number {
   return convertMetersToFeet(meters) / 5280.0;
 }
+
+/**
+ * Converts a Date object into a string of the form YYYY-MM-DD
+ * @param inputDate Date to convert
+ */
+export function getDateStringFromDate(inputDate: Date): string {
+  return inputDate.toISOString().split('T')[0];
+}

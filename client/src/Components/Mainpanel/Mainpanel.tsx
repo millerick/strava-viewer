@@ -25,10 +25,10 @@ export class Mainpanel extends React.Component<any, any> {
     }
     const fieldMapping = {
       Activity: 'name',
-      Date: 'date',
+      Date: 'activity_date',
       Distance: 'distance',
-      'Elevation Gain': 'elevationGain',
-      'Elapsed Time': 'elapsedTime',
+      'Elevation Gain': 'elevation_gain',
+      'Elapsed Time': 'elapsed_time',
     };
     return (
       <div id="mainpanel" className="Mainpanel">

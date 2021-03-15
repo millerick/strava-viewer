@@ -200,7 +200,7 @@ app.get('/api/total', async (req, res) => {
     if (_.isNil(activityTypeTotals[activity.type])) {
       activityTypeTotals[activity.type] = {
         distance: 0,
-        elevation_gain: 0,
+        elevationGain: 0,
       };
     }
     activityTypeTotals[activity.type].distance += activity.distance;
@@ -210,7 +210,7 @@ app.get('/api/total', async (req, res) => {
   _.each(_.keys(activityTypeTotals), (activityType) => {
     outputTotals.push({
       distance: activityTypeTotals[activityType].distance,
-      elevationGain: activityTypeTotals[activityType].elevation_gain,
+      elevationGain: activityTypeTotals[activityType].elevationGain,
       activityType,
     });
   });
