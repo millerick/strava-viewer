@@ -14,9 +14,11 @@ const CONNECTION_POOL = new Pool({
 /**
  * USEFUL HOOKS FOR DEBUGGING
  */
-CONNECTION_POOL.on('connect', () => console.log('PG: connection created'));
-CONNECTION_POOL.on('acquire', () => console.log('PG: client acquired'));
-CONNECTION_POOL.on('remove', () => console.log('PG: client removed'));
+if (config.DEBUG_ENABLED) {
+  CONNECTION_POOL.on('connect', () => console.log('PG: connection created'));
+  CONNECTION_POOL.on('acquire', () => console.log('PG: client acquired'));
+  CONNECTION_POOL.on('remove', () => console.log('PG: client removed'));
+}
 
 /**
  * Error handler for the pool, to provide protection in the case of unexpected errors.

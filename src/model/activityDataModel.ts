@@ -30,7 +30,7 @@ export async function insertOne(
 
 export async function getUserActivities(userId: string): Promise<ActivityData[]> {
   const results = await db.pool.query(
-    `SELECT user_id, name, type, distance, DATE(activity_datetime) as activity_date, elapsed_time, elevation_gain FROM ${TABLE_NAME} WHERE user_id = $1`,
+    `SELECT user_id, name, type, distance, DATE(activity_datetime) as activity_date, elapsed_time, elevation_gain FROM ${TABLE_NAME} WHERE user_id = $1 ORDER BY activity_datetime DESC`,
     [userId],
   );
   return results.rows;
