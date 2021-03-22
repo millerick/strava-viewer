@@ -141,8 +141,7 @@ app.get('/api/refresh', async (req, res) => {
 
 app.get('/api/total', async (req, res) => {
   if (req.userId === undefined) {
-    res.status(500);
-    res.send();
+    res.send([]);
     return;
   }
   const athleteTotals = await activityDataModel.aggregateActivityTypeTotals(req.userId);

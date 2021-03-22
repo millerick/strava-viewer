@@ -1,4 +1,4 @@
-.SidepanelContainer {
+.SidepanelBase {
   background-color: #202020;
   color: white;
   padding: 3px;
@@ -6,17 +6,25 @@
   font-weight: bold;
   border-radius: 3px;
   width: 400px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: gray;
   font-family: "Roboto";
   text-align: center;
   flex-shrink: 0;
 }
 
+.SidepanelContainer {
+  @extend .SidepanelBase;
+  border-width: 1px;
+  border-style: solid;
+  border-color: gray;
+}
+
 .Divider {
   display: flex;
   flex: 1;
+}
+
+.PoweredBy {
+  @extend .SidepanelBase;
 }
 
 .LogInOutButton {
