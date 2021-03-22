@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import * as express from 'express';
-import * as session from 'express-session';
-import * as connectPGSession from 'connect-pg-simple';
+
 import * as cookieParser from 'cookie-parser';
 import * as path from 'path';
 import * as request from 'request-promise-native';
@@ -11,12 +10,10 @@ import * as credentials from './credentials';
 import * as utils from './utils';
 import * as activityController from './controller/activityController';
 import * as config from './config';
-import * as db from './db';
 import * as userController from './controller/userController';
 import * as userMiddleware from './middleware/userMiddleware';
+import * as sessionMiddleware from './middleware/sessionMiddleware';
 import * as activityDataModel from './model/activityDataModel';
-
-const pgSession = connectPGSession(session);
 
 const CLIENT_DIR = path.join(__dirname, '../build/dist');
 
@@ -79,26 +76,14 @@ async function getAthleteData(bearerToken: string, userId: string) {
 app.use(cookieParser());
 
 /**
- * TODO: separate into private and public routes
+ * Middlewares that we maintain
  */
-app.use(
-  session({
-    store: new pgSession({
-      pool: db.pool,
-    }),
-    name: config.SESSION_COOKIE,
-    secret: 'keyboard cat', // TODO: change to a secret
-    resave: false,
-    cookie: {
-      secure: config.SECURE_COOKIES,
-      httpOnly: true,
-      maxAge: 365 * 24 * 60 * 60 * 1000, // one year
-    },
-  }),
-);
-
+app.use(sessionMiddleware.wrappedSessionMiddleware);
 app.use(userMiddleware.attachUserMiddleware);
 
+/**
+ * TODO: separate into private and public routes
+ */
 app.get('/login', async (req, res) => {
   if (req.userId === undefined) {
     res.redirect(
