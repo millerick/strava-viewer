@@ -33,5 +33,13 @@ export const SESSION_COOKIE = 'strava-viewer-connect-session';
  * POSTGRES CONFIGS
  */
 export const POSTGRES_HOST = '192.168.86.44';
-export const POSTGRES_DATABASE = 'strava_viewer'; // TODO: separate into dev and production databases
+export const POSTGRES_DATABASE = (() => {
+  switch (NODE_ENV) {
+    case 'production':
+      return 'strava_viewer';
+    case 'dev':
+    default:
+      return 'strava_viewer'; // TODO: create a different database for dev
+  }
+})();
 export const POSTGRES_PORT = 5432;
