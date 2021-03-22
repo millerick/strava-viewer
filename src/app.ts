@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import * as express from 'express';
 
-import * as cookieParser from 'cookie-parser';
 import * as path from 'path';
 import axios from 'axios';
 import * as url from 'url';
@@ -72,8 +71,6 @@ async function getAthleteData(bearerToken: string, userId: string) {
     }
   }
 }
-
-app.use(cookieParser());
 
 /**
  * Middlewares that we maintain
