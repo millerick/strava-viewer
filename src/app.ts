@@ -37,6 +37,7 @@ declare global {
  * @param athleteId Id of the athlete within Strava matching the bearer token.
  */
 async function getAthleteData(bearerToken: string, userId: string) {
+  const pageSize = 50;
   const latestActivityDatetime = await activityDataModel.getLatestActivityTimestamp(userId);
   let pullAfter = 0;
   if (latestActivityDatetime !== undefined) {
@@ -52,7 +53,7 @@ async function getAthleteData(bearerToken: string, userId: string) {
       qs: {
         page,
         after: pullAfter,
-        per_page: 50,
+        per_page: pageSize,
       },
       json: true,
     });
@@ -68,7 +69,8 @@ async function getAthleteData(bearerToken: string, userId: string) {
           utils.convertMetersToFeet(activity.total_elevation_gain),
         );
       });
-    } else {
+    }
+    if (allActivities.length < pageSize) {
       break;
     }
   }
