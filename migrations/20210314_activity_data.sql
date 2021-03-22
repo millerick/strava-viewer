@@ -4,7 +4,7 @@ CREATE TABLE activity_data(
   id uuid DEFAULT uuid_generate_v4 (),
   user_id uuid NOT NULL,
   name VARCHAR(255),
-  type VARCHAR(255),
+  type VARCHAR(255) NOT NULL,
   distance DOUBLE PRECISION,
   activity_datetime TIMESTAMP,
   elapsed_time DOUBLE PRECISION,

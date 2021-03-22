@@ -53,7 +53,7 @@ async function getAthleteData(bearerToken: string, userId: string) {
       },
     });
     if (allActivities.data.length > 0) {
-      _.each(allActivities, async (activity) => {
+      _.each(allActivities.data, async (activity) => {
         await activityDataModel.insertOne(
           userId,
           activity.name,
