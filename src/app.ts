@@ -92,7 +92,7 @@ app.use(
     cookie: {
       secure: config.SECURE_COOKIES,
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // one day
+      maxAge: 365 * 24 * 60 * 60 * 1000, // one year
     },
   }),
 );
