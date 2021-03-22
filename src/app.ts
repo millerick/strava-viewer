@@ -3,7 +3,7 @@ import * as express from 'express';
 
 import * as cookieParser from 'cookie-parser';
 import * as path from 'path';
-import * as request from 'request-promise-native';
+import axios from 'axios';
 import * as url from 'url';
 
 import * as credentials from './credentials';
@@ -42,19 +42,19 @@ async function getAthleteData(bearerToken: string, userId: string) {
   }
   for (let page = 1; page < 100; page++) {
     console.log(`Fetching page ${page} for id ${userId}`);
-    const allActivities = await request('https://www.strava.com/api/v3/athlete/activities', {
+    const allActivities = await axios({
       method: 'GET',
+      url: 'https://www.strava.com/api/v3/athlete/activities',
       headers: {
         Authorization: `Bearer ${bearerToken}`,
       },
-      qs: {
+      params: {
         page,
         after: pullAfter,
         per_page: pageSize,
       },
-      json: true,
     });
-    if (allActivities.length > 0) {
+    if (allActivities.data.length > 0) {
       _.each(allActivities, async (activity) => {
         await activityDataModel.insertOne(
           userId,
@@ -67,7 +67,7 @@ async function getAthleteData(bearerToken: string, userId: string) {
         );
       });
     }
-    if (allActivities.length < pageSize) {
+    if (allActivities.data.length < pageSize) {
       break;
     }
   }
@@ -114,15 +114,16 @@ app.get('/check-login', async (req, res) => {
 });
 
 app.get('/api/oauth/redirect', async (req, res) => {
-  const oauthData = await request('https://www.strava.com/oauth/token', {
+  const response = await axios({
     method: 'POST',
-    body: {
+    url: 'https://www.strava.com/oauth/token',
+    data: {
       client_id: credentials.clientID,
       client_secret: credentials.clientSecret,
       code: req.query.code,
     },
-    json: true,
   });
+  const oauthData = response.data;
   const athleteId = oauthData.athlete.id;
   const bearerToken = oauthData.access_token;
   await userController.addUser(
