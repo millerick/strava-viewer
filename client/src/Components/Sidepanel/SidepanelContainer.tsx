@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import './Sidepanel.scss';
 
 export class SidepanelContainer extends React.Component<any, any> {
@@ -15,13 +16,13 @@ export class SidepanelContainer extends React.Component<any, any> {
     const route = `/${this.state.activityType}`;
     return (
       <div className="SidepanelContainer">
-        <a href={route}>
+        <Link to={route}>
           {this.state.activityType}
           <br />
           Distance: {this.state.totalDistance.toFixed(2)} mi
           <br />
           Elevation: {this.state.totalElevationGain.toFixed(2)} ft
-        </a>
+        </Link>
       </div>
     );
   }

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import axios from 'axios';
 
 import { Sidepanel } from '../Sidepanel/Sidepanel';
 import { Mainpanel } from '../Mainpanel/Mainpanel';
@@ -6,17 +7,24 @@ import { Mainpanel } from '../Mainpanel/Mainpanel';
 export class App extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
-    const activityType = props.match && props.match.params ? props.match.params.activityType : undefined;
     this.state = {
-      activityType,
+      loggedInFlag: false,
     };
   }
 
+  async componentDidMount() {
+    const loggedInCheck = await axios.get('/check-login');
+    this.setState({
+      loggedInFlag: loggedInCheck.data.loggedInFlag,
+    });
+  }
+
   render() {
+    const activityType = this.props.match && this.props.match.params ? this.props.match.params.activityType : undefined;
     return (
       <div id="app">
-        <Sidepanel />
-        <Mainpanel activityType={this.state.activityType} />
+        <Sidepanel loggedInFlag={this.state.loggedInFlag} />
+        <Mainpanel key={activityType} activityType={activityType} />
       </div>
     );
   }

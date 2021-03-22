@@ -9,21 +9,22 @@ import { Login } from './Login';
 import { Refresh } from './Refresh';
 import { PoweredByStrava } from './PoweredByStrava';
 
-export class Sidepanel extends React.Component<any, any> {
-  constructor(props: any) {
+interface SidepanelProps {
+  loggedInFlag: boolean;
+}
+
+export class Sidepanel extends React.Component<SidepanelProps, any> {
+  constructor(props: SidepanelProps) {
     super(props);
     this.state = {
       data: {},
-      loggedInFlag: undefined,
     };
   }
 
   async componentDidMount() {
-    const [totalResponse, loggedInCheck] = await Promise.all([axios.get('/api/total'), axios.get('/check-login')]);
-    console.log(loggedInCheck.data.loggedInFlag);
+    const totalResponse = await axios.get('/api/total');
     this.setState({
       data: totalResponse.data,
-      loggedInFlag: loggedInCheck.data.loggedInFlag,
     });
   }
 
@@ -37,9 +38,9 @@ export class Sidepanel extends React.Component<any, any> {
         })}
         <div className="Divider" />
         <PoweredByStrava />
-        {this.state.loggedInFlag && <Refresh /> /* Display refresh button only when logged in */}
-        {this.state.loggedInFlag === true && <Logout />}
-        {this.state.loggedInFlag === false && <Login />}
+        {this.props.loggedInFlag && <Refresh /> /* Display refresh button only when logged in */}
+        {this.props.loggedInFlag === true && <Logout />}
+        {this.props.loggedInFlag === false && <Login />}
       </div>
     );
   }
