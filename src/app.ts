@@ -13,8 +13,7 @@ import * as userController from './controller/userController';
 import * as userMiddleware from './middleware/userMiddleware';
 import * as sessionMiddleware from './middleware/sessionMiddleware';
 import * as activityDataModel from './model/activityDataModel';
-
-const CLIENT_DIR = path.join(__dirname, '../build/dist');
+import * as publicRouter from './router/publicRouter';
 
 const app = express();
 
@@ -79,37 +78,13 @@ app.use(sessionMiddleware.wrappedSessionMiddleware);
 app.use(userMiddleware.attachUserMiddleware);
 
 /**
+ * Public routes
+ */
+app.use(publicRouter.routes);
+
+/**
  * TODO: separate into private and public routes
  */
-app.get('/login', async (req, res) => {
-  if (req.userId === undefined) {
-    res.redirect(
-      url.format({
-        pathname: 'https://www.strava.com/oauth/authorize',
-        query: {
-          client_id: credentials.clientID,
-          redirect_uri: `${config.BASE_PATH}/api/oauth/redirect`,
-          response_type: 'code',
-          approval_prompt: 'auto',
-          scope: 'activity:read_all',
-        },
-      }),
-    );
-  } else {
-    res.redirect(
-      url.format({
-        pathname: config.BASE_PATH,
-      }),
-    );
-  }
-});
-
-app.get('/check-login', async (req, res) => {
-  res.send({
-    loggedInFlag: req.userId !== undefined,
-  });
-});
-
 app.get('/api/oauth/redirect', async (req, res) => {
   const response = await axios({
     method: 'POST',
@@ -164,15 +139,6 @@ app.get('/api/refresh', async (req, res) => {
   }
 });
 
-app.get('/api/logout', (req, res) => {
-  res.clearCookie(config.SESSION_COOKIE);
-  res.redirect(
-    url.format({
-      pathname: config.BASE_PATH,
-    }),
-  );
-});
-
 app.get('/api/total', async (req, res) => {
   if (req.userId === undefined) {
     res.status(500);
@@ -203,9 +169,10 @@ app.get('/api/aggregate/:activityType', async (req, res) => {
   res.send(activityController.aggregateActivityType(athleteData));
 });
 
-app.get('/assets/:fileName', (req, res) => res.sendFile(path.join(CLIENT_DIR, req.params.fileName)));
-
-app.get('*', (req, res) => res.sendFile(path.join(CLIENT_DIR, 'index.html')));
+/**
+ * The fall through must be last
+ */
+app.get('*', (req, res) => res.sendFile(path.join(config.CLIENT_DIR, 'index.html')));
 
 app.listen(3000, async () => {
   console.log('App listening on port 3000!');
