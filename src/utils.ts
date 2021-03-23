@@ -23,3 +23,20 @@ export function convertMetersToMiles(meters: number): number {
 export function getDateStringFromDate(inputDate: Date): string {
   return inputDate.toISOString().split('T')[0];
 }
+
+/**
+ * Converts a Date into the number of seconds since the Epoch
+ * @param inputDate Date to convert
+ */
+export function convertToEpoch(inputDate: Date): number {
+  return Math.floor(inputDate.getTime() / 1000);
+}
+
+/**
+ * Checks to see if the input date is more than an hour in the past.
+ * @param inputDate Date to check
+ */
+export function moreThanAnHourAgo(inputDate: Date): boolean {
+  const difference = new Date().getTime() - inputDate.getTime();
+  return difference > 60 * 60 * 1000; // more than an hour
+}

@@ -6,7 +6,6 @@ import './Sidepanel.scss';
 import { SidepanelContainer } from './SidepanelContainer';
 import { Logout } from './Logout';
 import { Login } from './Login';
-import { Refresh } from './Refresh';
 import { PoweredByStrava } from './PoweredByStrava';
 
 interface SidepanelProps {
@@ -38,7 +37,6 @@ export class Sidepanel extends React.Component<SidepanelProps, any> {
         })}
         <div className="Divider" />
         <PoweredByStrava />
-        {this.props.loggedInFlag && <Refresh /> /* Display refresh button only when logged in */}
         {this.props.loggedInFlag === true && <Logout />}
         {this.props.loggedInFlag === false && <Login />}
       </div>

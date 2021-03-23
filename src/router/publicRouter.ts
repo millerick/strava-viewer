@@ -4,6 +4,8 @@ import * as url from 'url';
 
 import * as credentials from '../credentials';
 import * as config from '../config';
+import * as userController from '../controller/userController';
+import * as strava from '../external/strava';
 
 export const routes = express.Router();
 
@@ -31,8 +33,16 @@ routes.get('/login', async (req, res) => {
 });
 
 routes.get('/check-login', async (req, res) => {
+  const loggedInFlag = req.userId !== undefined;
+  if (loggedInFlag) {
+    // Try repulling the data
+    const user = await userController.getUserByUserId(req.userId!);
+    if (user && user.bearer_token) {
+      await strava.getAthleteData(user.bearer_token, req.userId!);
+    }
+  }
   res.send({
-    loggedInFlag: req.userId !== undefined,
+    loggedInFlag,
   });
 });
 
