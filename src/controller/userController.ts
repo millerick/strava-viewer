@@ -36,7 +36,6 @@ export async function addUser(
 
 export async function shouldPullData(id: string): Promise<boolean> {
   const lastPullDateTime = await userModel.getLastPullTime(id);
-  console.log(`=== LAST PULL ${lastPullDateTime}`)
   if (lastPullDateTime === undefined) {
     return true;
   }
