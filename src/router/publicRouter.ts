@@ -33,17 +33,18 @@ routes.get('/login', async (req, res) => {
 });
 
 routes.get('/check-login', async (req, res) => {
-  const loggedInFlag = req.userId !== undefined;
-  if (loggedInFlag) {
+  const response = {
+    loggedInFlag: false,
+  };
+  if (req.userId !== undefined) {
+    response.loggedInFlag = true;
     // Try repulling the data
-    const user = await userController.getUserByUserId(req.userId!);
+    const user = await userController.getUserByUserId(req.userId);
     if (user && user.bearer_token) {
-      await strava.getAthleteData(user.bearer_token, req.userId!);
+      await strava.getAthleteData(user.bearer_token, req.userId);
     }
   }
-  res.send({
-    loggedInFlag,
-  });
+  res.send(response);
 });
 
 routes.get('/api/logout', (req, res) => {
