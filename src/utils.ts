@@ -26,9 +26,12 @@ export function getDateStringFromDate(inputDate: Date): string {
 
 /**
  * Converts a Date into the number of seconds since the Epoch
- * @param inputDate Date to convert
+ * @param inputDate Date to convert.  If it is undefined, returns 0.
  */
-export function convertToEpoch(inputDate: Date): number {
+export function convertToEpoch(inputDate: Date | undefined): number {
+  if (inputDate === undefined) {
+    return 0;
+  }
   return Math.floor(inputDate.getTime() / 1000);
 }
 

@@ -7,6 +7,7 @@ interface UserData {
   bearer_token?: string;
   strava_user_name?: string;
   session_id?: string;
+  last_pull_datetime?: Date;
 }
 
 const TABLE_NAME = 'users';
@@ -67,4 +68,18 @@ export async function getSession(sessionId: string): Promise<void> {
 
 export async function setSessionByStravaId(stravaId: string, sessionId: string): Promise<void> {
   await db.pool.query(`UPDATE ${TABLE_NAME} SET session_id=$1 WHERE strava_user_id=$2`, [sessionId, stravaId]);
+}
+
+export async function setLastPullTime(id: string): Promise<void> {
+  await db.pool.query(`UPDATE ${TABLE_NAME} SET last_pull_datetime = NOW() WHERE id=$1`, [id]);
+}
+
+export async function getLastPullTime(id: string): Promise<Date | undefined> {
+  const queryResults = await db.pool.query(`SELECT last_pull_datetime FROM ${TABLE_NAME} WHERE id=$1`, [id]);
+  if (queryResults.rows.length === 0) {
+    return undefined;
+  } else if (queryResults.rows[0].last_pull_datetime === null) {
+    return undefined;
+  }
+  return queryResults.rows[0].last_pull_datetime;
 }

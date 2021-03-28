@@ -3,6 +3,7 @@ import axios from 'axios';
 
 import * as utils from '../utils';
 import * as activityDataModel from '../model/activityDataModel';
+import * as userController from '../controller/userController';
 
 // TODO: put all logic to pull a bearer and refresh token in this file
 
@@ -13,17 +14,11 @@ import * as activityDataModel from '../model/activityDataModel';
  */
 export async function getAthleteData(bearerToken: string, userId: string): Promise<void> {
   const pageSize = 50;
-  const latestActivityDatetime = await activityDataModel.getLatestActivityTimestamp(userId);
-  console.log(latestActivityDatetime);
-  let pullAfter = 0;
-  if (latestActivityDatetime !== undefined) {
-    pullAfter = utils.convertToEpoch(latestActivityDatetime) + 1;
-    // If the most recent activity is from within the last hour, then we do not need to pull data again
-    // TODO: base this off of the last time a pull was attempted rather than the last activity date
-    if (!utils.moreThanAnHourAgo(latestActivityDatetime)) {
-      return;
-    }
+  const shouldPull = await userController.shouldPullData(userId);
+  if (!shouldPull) {
+    return;
   }
+  const pullAfter = utils.convertToEpoch(await activityDataModel.getLatestActivityTimestamp(userId));
   for (let page = 1; page < 100; page++) {
     console.log(`Fetching page ${page} for id ${userId}`);
     const allActivities = await axios({
@@ -55,4 +50,5 @@ export async function getAthleteData(bearerToken: string, userId: string): Promi
       break;
     }
   }
+  await userController.setLastPullTime(userId);
 }

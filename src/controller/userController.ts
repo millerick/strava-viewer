@@ -1,4 +1,5 @@
 import * as userModel from '../model/userModel';
+import * as utils from '../utils';
 
 /**
  *
@@ -33,6 +34,20 @@ export async function addUser(
   }
 }
 
+export async function shouldPullData(id: string): Promise<boolean> {
+  const lastPullDateTime = await userModel.getLastPullTime(id);
+  console.log(`=== LAST PULL ${lastPullDateTime}`)
+  if (lastPullDateTime === undefined) {
+    return true;
+  }
+  return utils.moreThanAnHourAgo(lastPullDateTime);
+}
+
+/**
+ * Simple functions to expose directly from the model
+ */
+
 export const getUserBySessionId = userModel.getUserBySessionId;
 export const getUserByUserId = userModel.getUser;
 export const setSessionByStravaId = userModel.setSessionByStravaId;
+export const setLastPullTime = userModel.setLastPullTime;
