@@ -2,7 +2,7 @@ import * as userModel from '../model/userModel';
 import * as utils from '../utils';
 
 /**
- *
+ * Checks to see if a user exists in our system for the input Strava userId
  * @param stravaUserId The userId from Strava's systems
  */
 async function userExistsByStravaId(stravaUserId: string): Promise<boolean> {
@@ -34,6 +34,11 @@ export async function addUser(
   }
 }
 
+/**
+ * Returns a boolean indicating whether or not the Strava data should be pulled again.
+ * Whether or not to pull is based on the last time data was successfully pulled.
+ * @param id
+ */
 export async function shouldPullData(id: string): Promise<boolean> {
   const lastPullDateTime = await userModel.getLastPullTime(id);
   if (lastPullDateTime === undefined) {

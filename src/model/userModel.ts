@@ -12,6 +12,14 @@ interface UserData {
 
 const TABLE_NAME = 'users';
 
+/**
+ * Insert a new user into the database.
+ * @param stravaUserId
+ * @param sessionId
+ * @param refreshToken
+ * @param bearerToken
+ * @param stravaUserName
+ */
 export async function insert(
   stravaUserId: string,
   sessionId: string,
@@ -28,6 +36,14 @@ export async function insert(
   return queryResults.rows[0].id;
 }
 
+/**
+ * Uses the Strava userId to apply an update to the user object in our database.
+ * @param stravaUserId
+ * @param sessionId
+ * @param refreshToken
+ * @param bearerToken
+ * @param stravaUserName
+ */
 export async function updateByStravaUserId(
   stravaUserId: string,
   sessionId: string,
@@ -41,16 +57,19 @@ export async function updateByStravaUserId(
   );
 }
 
-export async function getUser(id: string): Promise<UserData | undefined> {
-  const queryResults = await db.pool.query(`SELECT * FROM ${TABLE_NAME} WHERE id=$1`, [id]);
-  return queryResults.rows[0];
-}
-
+/**
+ * Returns user information for a given Strava userId.
+ * @param stravaUserId
+ */
 export async function getUserByStravaId(stravaUserId: string): Promise<UserData | undefined> {
   const queryResults = await db.pool.query(`SELECT * FROM ${TABLE_NAME} WHERE strava_user_id=$1`, [stravaUserId]);
   return queryResults.rows[0];
 }
 
+/**
+ * Uses a sessionId to retrieve all user information.
+ * @param sessionId
+ */
 export async function getUserBySessionId(sessionId: string): Promise<UserData | undefined> {
   const queryResults = await db.pool.query(`SELECT * FROM ${TABLE_NAME} WHERE session_id=$1`, [sessionId]);
   if (queryResults.rows.length === 0) {
@@ -59,21 +78,18 @@ export async function getUserBySessionId(sessionId: string): Promise<UserData | 
   return queryResults.rows[0];
 }
 
-export async function getSession(sessionId: string): Promise<void> {
-  const queryResults = await db.pool.query(`SELECT * FROM ${TABLE_NAME} WHERE session_id=$1`, [sessionId]);
-  if (queryResults.rows.length !== 0) {
-    throw new Error('Session not found');
-  }
-}
-
-export async function setSessionByStravaId(stravaId: string, sessionId: string): Promise<void> {
-  await db.pool.query(`UPDATE ${TABLE_NAME} SET session_id=$1 WHERE strava_user_id=$2`, [sessionId, stravaId]);
-}
-
+/**
+ * Sets the last pull time for a user to the current time.
+ * @param id
+ */
 export async function setLastPullTime(id: string): Promise<void> {
   await db.pool.query(`UPDATE ${TABLE_NAME} SET last_pull_datetime = NOW() WHERE id=$1`, [id]);
 }
 
+/**
+ * Retrieves the last pull time for a user if one exists, otherwise returns undefined.
+ * @param id
+ */
 export async function getLastPullTime(id: string): Promise<Date | undefined> {
   const queryResults = await db.pool.query(`SELECT last_pull_datetime FROM ${TABLE_NAME} WHERE id=$1`, [id]);
   if (queryResults.rows.length === 0) {

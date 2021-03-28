@@ -8,6 +8,12 @@ import * as configController from '../controller/configController';
 
 const pgSession = connectPGSession(session);
 
+/**
+ * Wraps the open source session middleware so that we can dynamically pull the session secret from the database.
+ * @param req
+ * @param res
+ * @param next
+ */
 export async function wrappedSessionMiddleware(
   req: express.Request,
   res: express.Response,

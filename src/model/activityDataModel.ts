@@ -19,6 +19,16 @@ interface ActivityTotals {
 
 const TABLE_NAME = 'activity_data';
 
+/**
+ * Inserts a single activity into the database.
+ * @param userId
+ * @param name
+ * @param type
+ * @param distance
+ * @param activityDateTime
+ * @param elapsedTime
+ * @param elevationGain
+ */
 export async function insertOne(
   userId: string,
   name: string,
@@ -34,14 +44,11 @@ export async function insertOne(
   );
 }
 
-export async function getUserActivities(userId: string): Promise<ActivityData[]> {
-  const results = await db.pool.query(
-    `SELECT user_id, name, type, distance, DATE(activity_datetime) as activity_date, elapsed_time, elevation_gain FROM ${TABLE_NAME} WHERE user_id = $1 ORDER BY activity_datetime DESC`,
-    [userId],
-  );
-  return results.rows;
-}
-
+/**
+ * Retrieves all of a user's activities of a specific type.
+ * @param userId
+ * @param type
+ */
 export async function getUserActivitiesByType(userId: string, type: string): Promise<ActivityData[]> {
   const results = await db.pool.query(
     `SELECT user_id, name, type, distance, DATE(activity_datetime) as activity_date, elapsed_time, elevation_gain FROM ${TABLE_NAME} WHERE user_id = $1 AND type = $2 ORDER BY activity_datetime DESC`,
@@ -50,6 +57,10 @@ export async function getUserActivitiesByType(userId: string, type: string): Pro
   return results.rows;
 }
 
+/**
+ * Returns the timestamp for the most recent activity if one exists, otherwise returns undefined.
+ * @param userId
+ */
 export async function getLatestActivityTimestamp(userId: string): Promise<Date | undefined> {
   const results = await db.pool.query(
     `SELECT MAX(activity_datetime) as activity_datetime FROM ${TABLE_NAME} WHERE user_id = $1`,
@@ -61,6 +72,10 @@ export async function getLatestActivityTimestamp(userId: string): Promise<Date |
   return undefined;
 }
 
+/**
+ * Returns aggregate data for each activity type a user has engaged in.
+ * @param userId
+ */
 export async function aggregateActivityTypeTotals(userId: string): Promise<ActivityTotals[]> {
   const results = await db.pool.query(
     `SELECT type, SUM(elevation_gain) as elevation_gain, SUM(distance) as distance FROM ${TABLE_NAME} WHERE user_id = $1 GROUP BY type`,
