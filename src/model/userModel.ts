@@ -61,6 +61,15 @@ export async function updateByStravaUserId(
 }
 
 /**
+ * Returns user information.
+ * @param id
+ */
+export async function getUser(id: string): Promise<UserData | undefined> {
+  const queryResults = await db.pool.query(`SELECT * FROM ${TABLE_NAME} WHERE id=$1`, [id]);
+  return queryResults.rows[0];
+}
+
+/**
  * Returns user information for a given Strava userId.
  * @param stravaUserId
  */

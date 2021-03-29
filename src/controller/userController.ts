@@ -53,5 +53,4 @@ export async function shouldPullData(id: string): Promise<boolean> {
 
 export const getUserBySessionId = userModel.getUserBySessionId;
 export const getUserByUserId = userModel.getUser;
-export const setSessionByStravaId = userModel.setSessionByStravaId;
 export const setLastPullTime = userModel.setLastPullTime;
