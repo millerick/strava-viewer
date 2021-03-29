@@ -51,15 +51,14 @@ app.get('/api/oauth/redirect', async (req, res) => {
   const oauthData = response.data;
   const athleteId = oauthData.athlete.id;
   const bearerToken = oauthData.access_token;
-  await userController.addUser(
+  const userId = await userController.addUser(
     athleteId,
     req.sessionID,
     oauthData.refresh_token,
     bearerToken,
     oauthData.athlete.username,
   );
-  const user = await userController.getUserBySessionId(req.sessionID);
-  await strava.getAthleteData(bearerToken, user!.id);
+  await strava.getAthleteData(bearerToken, userId);
   res.redirect(
     url.format({
       pathname: config.BASE_PATH,

@@ -25,12 +25,12 @@ export async function addUser(
   refreshToken: string,
   bearerToken: string,
   stravaUserName: string,
-): Promise<void> {
+): Promise<string> {
   const userAlreadyExists = await userExistsByStravaId(stravaUserId);
   if (!userAlreadyExists) {
-    await userModel.insert(stravaUserId, sessionId, refreshToken, bearerToken, stravaUserName);
+    return userModel.insert(stravaUserId, sessionId, refreshToken, bearerToken, stravaUserName);
   } else {
-    await userModel.updateByStravaUserId(stravaUserId, sessionId, refreshToken, bearerToken, stravaUserName);
+    return userModel.updateByStravaUserId(stravaUserId, sessionId, refreshToken, bearerToken, stravaUserName);
   }
 }
 

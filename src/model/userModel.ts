@@ -50,11 +50,14 @@ export async function updateByStravaUserId(
   refreshToken: string,
   bearerToken: string,
   stravaUserName: string,
-): Promise<void> {
-  await db.pool.query(
-    `UPDATE ${TABLE_NAME} SET session_id=$1, refresh_token=$2, bearer_token=$3, strava_user_name=$4 WHERE strava_user_id=$5`,
+): Promise<string> {
+  const queryResults = await db.pool.query(
+    `UPDATE ${TABLE_NAME} SET session_id=$1, refresh_token=$2, bearer_token=$3, strava_user_name=$4
+    WHERE strava_user_id=$5
+    RETURNING id`,
     [sessionId, refreshToken, bearerToken, stravaUserName, stravaUserId],
   );
+  return queryResults.rows[0].id;
 }
 
 /**
