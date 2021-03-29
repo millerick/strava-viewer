@@ -1,12 +1,9 @@
 import * as express from 'express';
 import * as path from 'path';
-import axios from 'axios';
 import * as url from 'url';
 
-import * as credentials from './credentials';
 import * as activityController from './controller/activityController';
 import * as config from './config';
-import * as userController from './controller/userController';
 import * as userMiddleware from './middleware/userMiddleware';
 import * as sessionMiddleware from './middleware/sessionMiddleware';
 import * as activityDataModel from './model/activityDataModel';
@@ -39,26 +36,8 @@ app.use(publicRouter.routes);
  * TODO: separate into private and public routes
  */
 app.get('/api/oauth/redirect', async (req, res) => {
-  const response = await axios({
-    method: 'POST',
-    url: 'https://www.strava.com/oauth/token',
-    data: {
-      client_id: credentials.clientID,
-      client_secret: credentials.clientSecret,
-      code: req.query.code,
-    },
-  });
-  const oauthData = response.data;
-  const athleteId = oauthData.athlete.id;
-  const bearerToken = oauthData.access_token;
-  const userId = await userController.addUser(
-    athleteId,
-    req.sessionID,
-    oauthData.refresh_token,
-    bearerToken,
-    oauthData.athlete.username,
-  );
-  await strava.getAthleteData(bearerToken, userId);
+  const bearerInformation = await strava.getBearerAndRefreshToken(req.query.code as string, req.sessionID);
+  await strava.getAthleteData(bearerInformation.bearerToken, bearerInformation.userId);
   res.redirect(
     url.format({
       pathname: config.BASE_PATH,

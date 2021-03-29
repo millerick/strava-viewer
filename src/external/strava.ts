@@ -1,11 +1,46 @@
 import * as _ from 'lodash';
 import axios from 'axios';
 
+import * as credentials from '../credentials';
 import * as utils from '../utils';
 import * as activityDataModel from '../model/activityDataModel';
 import * as userController from '../controller/userController';
 
 // TODO: put all logic to pull a bearer and refresh token in this file
+
+/**
+ * Retrieves bearer and refresh token information from Strava after the OAuth redirect has been handled.
+ * @param oauthCode Code included in the redirect back to our site.
+ * @param sessionId Session information.
+ */
+export async function getBearerAndRefreshToken(
+  oauthCode: string,
+  sessionId: string,
+): Promise<{ bearerToken: string; userId: string }> {
+  const response = await axios({
+    method: 'POST',
+    url: 'https://www.strava.com/oauth/token',
+    data: {
+      client_id: credentials.clientID,
+      client_secret: credentials.clientSecret,
+      code: oauthCode,
+    },
+  });
+  const oauthData = response.data;
+  const athleteId = oauthData.athlete.id;
+  const bearerToken = oauthData.access_token;
+  const userId = await userController.addUser(
+    athleteId,
+    sessionId,
+    oauthData.refresh_token,
+    bearerToken,
+    oauthData.athlete.username,
+  );
+  return {
+    bearerToken,
+    userId,
+  };
+}
 
 /**
  * Retrieves data from the Strava API using a bearer token and the athleteId.
